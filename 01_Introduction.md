@@ -22,7 +22,8 @@ Ethem Alpaydin (2014):
 : ***Machine learning** is programming computers to optimize a performance criterion using example data or past experience.*
 
 
-> [!NOTE] What ⟨P, T, E⟩ Means?
+> [!NOTE]
+> What ⟨P, T, E⟩ Means?
 > - **Hand-written recognition**  
 >   - **T**: Recognizing hand-written words  
 >   - **P**: Percentage of words correctly classified  
