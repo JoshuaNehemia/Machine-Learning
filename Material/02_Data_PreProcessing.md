@@ -152,7 +152,7 @@ This is the data after scaling.
 ```
 
 
-> ![WARNING]
+> [!WARNING]
 > Remember that MinMaxScaler automatically scaling it by column.
 
 ###### **Example Calculation (First Column)**
@@ -320,7 +320,7 @@ Many ML models, like Linear Regression, can only learn linear relationships. If 
 
 If you have features $[a, b]$, generating polynomial features of degree 2 would create a new set of features: $[1, a, b, a^2, ab, b^2]$. The term $ab$ is called an **interaction feature**.
 
-> ![WARNING] 
+> [!WARNING] 
 > Using a high degree can lead to **overfitting**. The model becomes too complex and starts learning the noise in the training data, causing it to perform poorly on new, unseen data.
 
 ### Implementation
