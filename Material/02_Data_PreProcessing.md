@@ -237,6 +237,7 @@ For example, when analyzing documents, you might care more about the relative fr
 To transform a sample vector $x$ into a normalized vector $x'$, you divide each element of the vector by its norm, $\|x\|$.
 
 The general formula is:
+
 $$\begin{align}
 x' = \frac{1}{\|x\|} x
 \end{align}$$
