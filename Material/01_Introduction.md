@@ -182,6 +182,7 @@ graph TD
 
 </div></div>
 
+
 ## The Landscape of Machine Learning
 
 Machine Learning is not a monolithic discipline. It is an evolving ecosystem of approaches, each crafted to handle different realities of data and decision-making. At its heart lies one simple question: **How do we make machines learn from experience?** The answers have given rise to four major paradigms—**supervised learning, unsupervised learning, semi-supervised learning, and reinforcement learning**.
