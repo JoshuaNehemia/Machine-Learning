@@ -160,13 +160,16 @@ This is the data after scaling.
 Let's manually calculate the scaled values for the first column `[66, 8, 91, 84, 28]` where $X_{min}=8$ and $X_{max}=91$.
 
 * **For the value `66`:**
-    $X_{scaled} = \frac{66 - 8}{91 - 8} = \frac{58}{83} \approx 0.69879518$
+
+$X_{scaled} = \frac{66 - 8}{91 - 8} = \frac{58}{83} \approx 0.69879518$
 
 * **For the value `8` (the minimum):**
-    $X_{scaled} = \frac{8 - 8}{91 - 8} = \frac{0}{83} = 0.0$
+
+$X_{scaled} = \frac{8 - 8}{91 - 8} = \frac{0}{83} = 0.0$
 
 * **For the value `91` (the maximum):**
-    $X_{scaled} = \frac{91 - 8}{91 - 8} = \frac{83}{83} = 1.0$
+
+$X_{scaled} = \frac{91 - 8}{91 - 8} = \frac{83}{83} = 1.0$
 
 The same logic is applied to the second and third columns using their respective min and max values. This process ensures that for each feature, the smallest value becomes **0**, the largest value becomes **1**, and all other values are scaled to a number between 0 and 1.
 
@@ -258,9 +261,11 @@ $$\begin{align}
 #### **L2 Norm (Euclidean Norm)**
 
 The L2 norm is the most common. It represents the straight-line distance from the origin to the data point (the "as-the-crow-flies" distance).
+
 $$\begin{align}
 \|x\|_2 = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}
 \end{align}$$
+
 **Calculation for our example:**
 $$\|x\|_2 = \sqrt{3^2 + (-4)^2 + 12^2} = \sqrt{9 + 16 + 144} = \sqrt{169} = 13$$
 **Normalization:**
@@ -276,6 +281,8 @@ $$\begin{align}
 $$\|x\|_{\infty} = \max(|3|, |-4|, |12|) = \max(3, 4, 12) = 12$$
 **Normalization:**
 $$x' = \frac{1}{12} [3, -4, 12] = [\frac{3}{12}, \frac{-4}{12}, \frac{12}{12}] = [0.25, -0.333, 1]$$
+
+![Example of Normalizing Observation](../Assets/Image/NormObsExam.png)
 
 #### Implementation
 ```python
@@ -363,20 +370,75 @@ df_le.head()
 
 ### Detecting Outliers
 
-**Outliers** are data points that are significantly different from the rest of the data. They can drastically skew your model's training process.
+**Outliers**
+: Data points that are significantly different from the rest of the data. 
 
-* **Why detect them?** They can bias statistical measures like the mean and standard deviation and pull the regression line of a linear model in their direction, leading to a poor fit for the majority of the data.
+Outlier can drastically skew model's training process.
 
-* **How to detect them:**
-    * **Visualization:** **Box plots** are excellent for this. Points that fall outside the "whiskers" of the plot are typically considered outliers. 
-    * **Interquartile Range (IQR) Method:** A common statistical approach.
-        1.  Find the first quartile (Q1, the 25th percentile) and the third quartile (Q3, the 75th percentile).
-        2.  Calculate the IQR: $IQR = Q3 - Q1$.
-        3.  Define the "fences" or boundaries:
-            * Lower Bound: $Q1 - 1.5 \cdot IQR$
-            * Upper Bound: $Q3 + 1.5 \cdot IQR$
-        4.  Any data point outside these bounds is an outlier.
-    * **Z-score:** For data that is approximately normally distributed, any point with a Z-score greater than 3 or less than -3 is often flagged as an outlier.
+Outlier can bias statistical measures like the mean and standard deviation and pull the regression line of a linear model in their direction, leading to a poor fit for the majority of the data.
+
+Identifying and handling outliers is crucial because they can skew statistical analysis and negatively impact the performance of a machine learning model.
+
+Outliers can appear for several reasons, and understanding the cause helps you decide how to handle them.
+
+* **Measurement Error:** These are simply mistakes. This can be due to human error during data entry (e.g., typing a salary as \$5,000,000 instead of \$50,000) or faulty equipment (e.g., a sensor temporarily malfunctioning). These are usually safe to correct or remove.
+* **Data Corruption:** Errors can occur during data collection, transmission, or processing. For instance, a value might be missing or distorted, resulting in a nonsensical data point.
+* **True Outlier Observation:** These are not errors but represent rare, genuine, and sometimes the most interesting events in the data. For example, in a dataset of financial transactions, a fraudulent transaction is a true outlier. In astronomy, the discovery of a new type of star would be an outlier. It's critical to identify these because removing them could mean throwing away the most important information.
+
+#### **Methods for Outlier Detection**
+
+##### **Standard Deviation Method**
+
+This method assumes that your data is approximately **normally distributed** (follows a bell curve). In a normal distribution, most data points cluster around the average.
+
+* **How it works:**
+    1.  Calculate the **mean ($\mu$)** and **standard deviation ($\sigma$)** of your feature.
+    2.  Set a threshold. A common rule of thumb is to consider any data point that is more than **3 standard deviations** away from the mean as an outlier.
+    3.  The acceptable range is therefore: $[\mu - 3\sigma, \mu + 3\sigma]$. Any point outside this range is an outlier.
+
+* **When to use it:** This is a quick and effective method **only if your data follows a Gaussian (normal) distribution**. Its main weakness is that the mean and standard deviation are themselves sensitive to outliers.
+###### Implementation
+```python
+import numpy as np
+
+#Generate feature
+np.random.seed(3)
+x=5+2*np.random.randn(1000)
+
+#Outliers detection
+mean=x.mean()
+sd=x.std()
+
+lb,ub=mean-3*sd,mean+3*sd
+
+print('mean: %.2f, std. dev.: %.2f, lb: %.2f, ub: %.2f'%(mean,sd,lb,ub))
+
+outliers=x[np.where((x<lb) | (x>ub))]
+print('Detected outliers:',outliers)
+
+x_outliers_free=x[np.where((x>=lb) & (x<=ub))]
+print('The number of non-outlier observations: %g' %len(x_outliers_free))
+```
+
+
+##### **Interquartile Range (IQR) Method**
+
+This is a more robust method that doesn't rely on the data being normally distributed. It's based on identifying the spread of the middle 50% of the data.
+
+* **How it works:**
+    1.  Sort the data and find the **quartiles**:
+        * **Q1** (First Quartile): The 25th percentile.
+        * **Q3** (Third Quartile): The 75th percentile.
+    2.  Calculate the **Interquartile Range (IQR)**, which is the range of the middle 50% of the data:
+        $$IQR = Q3 - Q1$$
+    3.  Define the outlier "fences" or boundaries:
+        * **Lower Bound:** $Q1 - 1.5 \cdot IQR$
+        * **Upper Bound:** $Q3 + 1.5 \cdot IQR$
+    4.  Any data point that falls outside these two fences is flagged as an outlier.
+
+* **Visualization:** This is the exact method used by **box plots** to visually display outliers as points beyond the "whiskers."
+    
+* **When to use it:** The IQR method is generally **preferred** because it is not influenced by extreme values, making it effective for both normal and skewed datasets.
 
 ### Handling Missing Values
 
