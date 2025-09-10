@@ -15,10 +15,9 @@ Of course! Here’s a breakdown of why data preprocessing is a critical step in 
 
 ## Why Data Preprocessing is Important
 
-Think of raw data as rough, uncut diamonds 💎. Before they can be used, they need to be cleaned, cut, and polished. Data preprocessing is that essential polishing process for your data. Without it, your machine learning model will likely be inaccurate and unreliable.
+Think of raw data as rough, uncut diamonds. Before they can be used, they need to be cleaned, cut, and polished. Data preprocessing is that essential polishing process for your data. Without it, your machine learning model will likely be inaccurate and unreliable.
 
 Here’s why it's so crucial:
-
 
 ### Data Comes in Different Forms and Structures
 Real-world data is messy and inconsistent. It can come from different sources, each with its own format.
@@ -153,7 +152,7 @@ This is the data after scaling.
 ```
 
 
->![WARNING]
+> ![WARNING]
 > Remember that MinMaxScaler automatically scaling it by column.
 
 ###### **Example Calculation (First Column)**
@@ -307,12 +306,28 @@ print(xs_inf)
 
 This technique creates new features by raising existing features to a power and creating interaction terms between features.
 
+![Polynomial Feature](../Assets/Image/PolyFeatExam.png)
+
 Many ML models, like Linear Regression, can only learn linear relationships. If the true relationship in your data is non-linear (e.g., quadratic), your model will perform poorly. By adding polynomial features, you allow a linear model to fit a more complex, non-linear function.
 
 If you have features $[a, b]$, generating polynomial features of degree 2 would create a new set of features: $[1, a, b, a^2, ab, b^2]$. The term $ab$ is called an **interaction feature**.
 
->![WARNING] 
+> ![WARNING] 
 > Using a high degree can lead to **overfitting**. The model becomes too complex and starts learning the noise in the training data, causing it to perform poorly on new, unseen data.
+
+### Implementation
+```python
+# Generate data with 10 observations and 3 features
+x = np.round(100*np.random.rand(3,3))
+print(x)
+
+# Generate polynomial feature of degree 2 from x
+from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures(degree=2)
+xs = poly.fit_transform(x)
+print(xs)
+```
+
 
 ### Encoding Categorical Features
 
@@ -325,6 +340,26 @@ Machine learning algorithms require numerical input. Encoding is the process of 
 * **Ordinal Data (Has order):** For categories with a clear ranking, like `['Small', 'Medium', 'Large']` or `['Low', 'High']`.
     * **Label Encoding (or Ordinal Encoding):** This method assigns a unique integer to each category based on its rank.
         * Example: `['Small', 'Medium', 'Large']` can be mapped to `[0, 1, 2]`.
+
+#### Implementation
+```python
+#Encoding categorical features
+import pandas as pd
+x={'Ans1':['l','m','l','h','m'],'Ans2':['a','sd','d','sa','n']}
+df=pd.DataFrame(x)
+df.head()
+
+#encoding categorical data using sklearn LabelEncoder
+dfm = df.copy()
+mapper={'l':1,'m':2,'h':3,'sd':1,'d':2,'n':3,'a':4,'sa':5}
+dfm.replace(mapper)
+
+#encoding categorical data using sklearn LabelEncoder
+from sklearn.preprocessing import LabelEncoder
+le=LabelEncoder()
+df_le=df.apply(le.fit_transform)
+df_le.head()
+```
 
 ### Detecting Outliers
 
